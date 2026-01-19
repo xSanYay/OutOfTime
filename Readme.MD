@@ -1,5 +1,7 @@
 # Clean Todo App with Smart Sequencing & Calendar Integration
 
+Image links in this >> https://github.com/xSanYay/todo_for_you_and_me/tree/main/evolution
+
 A modern, hierarchical todo application that focuses on **smart sequencing** and **Google Calendar integration** to help you track not just what you need to do, but how long tasks actually take.
 
 ## What Makes This Todo App Different
