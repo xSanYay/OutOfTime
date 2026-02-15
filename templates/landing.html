@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
     <title>OutOfTime</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap"
+        rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,10 +15,58 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg: #000;
+            --fg: #fff;
+            --fg-dim: rgba(255, 255, 255, 0.35);
+            --fg-faint: rgba(255, 255, 255, 0.08);
+            --fg-subtle: rgba(255, 255, 255, 0.15);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --card-hover-border: rgba(255, 255, 255, 0.25);
+            --card-glow: rgba(255, 255, 255, 0.06);
+            --icon-border: rgba(255, 255, 255, 0.15);
+        }
+
+        [data-theme="warm"] {
+            --bg: #1a1410;
+            --fg: #f5e6d3;
+            --fg-dim: rgba(245, 230, 211, 0.4);
+            --fg-faint: rgba(245, 230, 211, 0.06);
+            --fg-subtle: rgba(245, 230, 211, 0.15);
+            --card-border: rgba(245, 230, 211, 0.08);
+            --card-hover-border: rgba(232, 201, 160, 0.35);
+            --card-glow: rgba(232, 201, 160, 0.06);
+            --icon-border: rgba(232, 201, 160, 0.2);
+        }
+
+        [data-theme="cool"] {
+            --bg: #0a0f1a;
+            --fg: #c8d8f0;
+            --fg-dim: rgba(200, 216, 240, 0.4);
+            --fg-faint: rgba(200, 216, 240, 0.06);
+            --fg-subtle: rgba(200, 216, 240, 0.15);
+            --card-border: rgba(200, 216, 240, 0.08);
+            --card-hover-border: rgba(108, 155, 219, 0.4);
+            --card-glow: rgba(108, 155, 219, 0.06);
+            --icon-border: rgba(108, 155, 219, 0.2);
+        }
+
+        [data-theme="green"] {
+            --bg: #0a1410;
+            --fg: #c8e8d3;
+            --fg-dim: rgba(200, 232, 211, 0.4);
+            --fg-faint: rgba(200, 232, 211, 0.06);
+            --fg-subtle: rgba(200, 232, 211, 0.15);
+            --card-border: rgba(200, 232, 211, 0.08);
+            --card-hover-border: rgba(92, 184, 122, 0.4);
+            --card-glow: rgba(92, 184, 122, 0.06);
+            --icon-border: rgba(92, 184, 122, 0.2);
+        }
+
         body {
             font-family: 'Space Grotesk', sans-serif;
-            background: #000;
-            color: #fff;
+            background: var(--bg);
+            color: var(--fg);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -25,24 +76,14 @@
             position: relative;
         }
 
-        /* Subtle animated grain overlay */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 0;
-        }
-
         /* Grid lines background */
         body::after {
             content: '';
             position: fixed;
             inset: 0;
             background-image:
-                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+                linear-gradient(var(--fg-faint) 1px, transparent 1px),
+                linear-gradient(90deg, var(--fg-faint) 1px, transparent 1px);
             background-size: 60px 60px;
             pointer-events: none;
             z-index: 0;
@@ -54,10 +95,54 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 60px;
+            gap: 48px;
             padding: 40px;
             width: 100%;
             max-width: 800px;
+        }
+
+        /* Theme switcher */
+        .theme-bar {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            display: flex;
+            gap: 6px;
+            z-index: 5;
+        }
+
+        .theme-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 1.5px solid var(--fg-subtle);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .theme-dot:hover {
+            transform: scale(1.2);
+        }
+
+        .theme-dot.active {
+            border-color: var(--fg);
+            box-shadow: 0 0 8px var(--fg-faint);
+        }
+
+        .theme-dot[data-t="dark"] {
+            background: #000;
+        }
+
+        .theme-dot[data-t="warm"] {
+            background: #3a2a18;
+        }
+
+        .theme-dot[data-t="cool"] {
+            background: #1a2a40;
+        }
+
+        .theme-dot[data-t="green"] {
+            background: #1a3020;
         }
 
         /* Header */
@@ -71,9 +156,8 @@
             font-weight: 300;
             letter-spacing: 8px;
             text-transform: uppercase;
-            color: #fff;
+            color: var(--fg);
             margin-bottom: 12px;
-            position: relative;
         }
 
         .brand h1 span {
@@ -82,7 +166,7 @@
 
         .brand p {
             font-size: 0.85rem;
-            color: rgba(255,255,255,0.35);
+            color: var(--fg-dim);
             letter-spacing: 4px;
             text-transform: uppercase;
         }
@@ -97,17 +181,17 @@
 
         .card {
             position: relative;
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid var(--card-border);
             border-radius: 16px;
             padding: 48px 36px;
             text-decoration: none;
-            color: #fff;
+            color: var(--fg);
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 24px;
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            background: rgba(255,255,255,0.02);
+            background: var(--fg-faint);
             overflow: hidden;
             cursor: pointer;
         }
@@ -117,15 +201,15 @@
             position: absolute;
             inset: 0;
             border-radius: 16px;
-            background: radial-gradient(circle at 50% 120%, rgba(255,255,255,0.06) 0%, transparent 70%);
+            background: radial-gradient(circle at 50% 120%, var(--card-glow) 0%, transparent 70%);
             opacity: 0;
             transition: opacity 0.4s ease;
         }
 
         .card:hover {
-            border-color: rgba(255,255,255,0.25);
+            border-color: var(--card-hover-border);
             transform: translateY(-4px);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
 
         .card:hover::before {
@@ -135,7 +219,7 @@
         .card-icon {
             width: 64px;
             height: 64px;
-            border: 1px solid rgba(255,255,255,0.15);
+            border: 1px solid var(--icon-border);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -144,18 +228,22 @@
         }
 
         .card:hover .card-icon {
-            border-color: rgba(255,255,255,0.4);
-            box-shadow: 0 0 30px rgba(255,255,255,0.05);
+            border-color: var(--card-hover-border);
+            box-shadow: 0 0 30px var(--fg-faint);
         }
 
         .card-icon svg {
             width: 28px;
             height: 28px;
-            stroke: rgba(255,255,255,0.7);
+            stroke: var(--fg-dim);
             fill: none;
             stroke-width: 1.5;
             stroke-linecap: round;
             stroke-linejoin: round;
+        }
+
+        .card:hover .card-icon svg {
+            stroke: var(--fg);
         }
 
         .card h2 {
@@ -167,7 +255,7 @@
 
         .card p {
             font-size: 0.8rem;
-            color: rgba(255,255,255,0.35);
+            color: var(--fg-dim);
             text-align: center;
             line-height: 1.6;
         }
@@ -181,7 +269,7 @@
 
         .footer a {
             font-size: 0.75rem;
-            color: rgba(255,255,255,0.25);
+            color: var(--fg-dim);
             text-decoration: none;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -189,14 +277,14 @@
         }
 
         .footer a:hover {
-            color: rgba(255,255,255,0.6);
+            color: var(--fg);
         }
 
         .footer .dot {
             width: 3px;
             height: 3px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.15);
+            background: var(--fg-subtle);
         }
 
         /* Responsive */
@@ -223,16 +311,40 @@
 
         /* Entry animation */
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(24px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .brand { animation: fadeUp 0.6s ease both; }
-        .grid { animation: fadeUp 0.6s 0.15s ease both; }
-        .footer { animation: fadeUp 0.6s 0.3s ease both; }
+        .brand {
+            animation: fadeUp 0.6s ease both;
+        }
+
+        .grid {
+            animation: fadeUp 0.6s 0.15s ease both;
+        }
+
+        .footer {
+            animation: fadeUp 0.6s 0.3s ease both;
+        }
     </style>
 </head>
-<body>
+
+<body data-theme="dark">
+    <!-- Theme switcher -->
+    <div class="theme-bar">
+        <div class="theme-dot active" data-t="dark" onclick="setTheme('dark')" title="Dark"></div>
+        <div class="theme-dot" data-t="warm" onclick="setTheme('warm')" title="Warm"></div>
+        <div class="theme-dot" data-t="cool" onclick="setTheme('cool')" title="Cool"></div>
+        <div class="theme-dot" data-t="green" onclick="setTheme('green')" title="Green"></div>
+    </div>
+
     <div class="content">
         <div class="brand">
             <h1>Out<span>Of</span>Time</h1>
@@ -243,8 +355,8 @@
             <a href="/tasks" class="card" id="tasks-card">
                 <div class="card-icon">
                     <svg viewBox="0 0 24 24">
-                        <path d="M9 11l3 3L22 4"/>
-                        <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+                        <path d="M9 11l3 3L22 4" />
+                        <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
                     </svg>
                 </div>
                 <h2>Tasks</h2>
@@ -254,8 +366,8 @@
             <a href="/timer" class="card" id="timer-card">
                 <div class="card-icon">
                     <svg viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10"/>
-                        <polyline points="12 6 12 12 16 14"/>
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
                     </svg>
                 </div>
                 <h2>Timer</h2>
@@ -269,5 +381,18 @@
             <a href="/tasks">All Tasks</a>
         </div>
     </div>
+
+    <script>
+        function setTheme(t) {
+            document.body.setAttribute('data-theme', t === 'dark' ? 'dark' : t);
+            document.querySelectorAll('.theme-dot').forEach(d => d.classList.toggle('active', d.dataset.t === t));
+            localStorage.setItem('landingTheme', t);
+        }
+        (function () {
+            const saved = localStorage.getItem('landingTheme');
+            if (saved) setTheme(saved);
+        })();
+    </script>
 </body>
+
 </html>

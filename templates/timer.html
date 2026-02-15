@@ -15,37 +15,75 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg: #000;
+            --fg: #fff;
+            --fg-dim: rgba(255, 255, 255, 0.35);
+            --fg-faint: rgba(255, 255, 255, 0.08);
+            --fg-subtle: rgba(255, 255, 255, 0.15);
+            --ring-stroke: #fff;
+            --ring-bg: rgba(255, 255, 255, 0.06);
+            --tick-color: rgba(255, 255, 255, 0.1);
+            --tick-major: rgba(255, 255, 255, 0.3);
+        }
+
+        [data-theme="warm"] {
+            --bg: #1a1410;
+            --fg: #f5e6d3;
+            --fg-dim: rgba(245, 230, 211, 0.4);
+            --fg-faint: rgba(245, 230, 211, 0.06);
+            --fg-subtle: rgba(245, 230, 211, 0.15);
+            --ring-stroke: #e8c9a0;
+            --ring-bg: rgba(232, 201, 160, 0.08);
+            --tick-color: rgba(232, 201, 160, 0.12);
+            --tick-major: rgba(232, 201, 160, 0.35);
+        }
+
+        [data-theme="cool"] {
+            --bg: #0a0f1a;
+            --fg: #c8d8f0;
+            --fg-dim: rgba(200, 216, 240, 0.4);
+            --fg-faint: rgba(200, 216, 240, 0.06);
+            --fg-subtle: rgba(200, 216, 240, 0.15);
+            --ring-stroke: #6c9bdb;
+            --ring-bg: rgba(108, 155, 219, 0.08);
+            --tick-color: rgba(108, 155, 219, 0.12);
+            --tick-major: rgba(108, 155, 219, 0.35);
+        }
+
+        [data-theme="green"] {
+            --bg: #0a1410;
+            --fg: #c8e8d3;
+            --fg-dim: rgba(200, 232, 211, 0.4);
+            --fg-faint: rgba(200, 232, 211, 0.06);
+            --fg-subtle: rgba(200, 232, 211, 0.15);
+            --ring-stroke: #5cb87a;
+            --ring-bg: rgba(92, 184, 122, 0.08);
+            --tick-color: rgba(92, 184, 122, 0.12);
+            --tick-major: rgba(92, 184, 122, 0.35);
+        }
+
         body {
             font-family: 'Space Grotesk', sans-serif;
-            background: #000;
-            color: #fff;
+            background: var(--bg);
+            color: var(--fg);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
-        /* grain */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* grid lines */
+        /* Subtle grid */
         body::after {
             content: '';
             position: fixed;
             inset: 0;
             background-image:
-                linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+                linear-gradient(var(--fg-faint) 1px, transparent 1px),
+                linear-gradient(90deg, var(--fg-faint) 1px, transparent 1px);
             background-size: 60px 60px;
             pointer-events: none;
             z-index: 0;
@@ -57,17 +95,23 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 36px;
+            gap: 28px;
             padding: 24px;
             width: 100%;
             max-width: 540px;
         }
 
-        /* Back link */
+        /* Top bar */
+        .top-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
         .back {
-            align-self: flex-start;
             font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.3);
+            color: var(--fg-dim);
             text-decoration: none;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -75,19 +119,59 @@
         }
 
         .back:hover {
-            color: rgba(255, 255, 255, 0.7);
+            color: var(--fg);
+        }
+
+        /* Theme switcher */
+        .theme-switcher {
+            display: flex;
+            gap: 6px;
+        }
+
+        .theme-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 1.5px solid var(--fg-subtle);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .theme-dot:hover {
+            transform: scale(1.2);
+        }
+
+        .theme-dot.active {
+            border-color: var(--fg);
+            box-shadow: 0 0 8px var(--fg-faint);
+        }
+
+        .theme-dot[data-t="dark"] {
+            background: #000;
+        }
+
+        .theme-dot[data-t="warm"] {
+            background: #3a2a18;
+        }
+
+        .theme-dot[data-t="cool"] {
+            background: #1a2a40;
+        }
+
+        .theme-dot[data-t="green"] {
+            background: #1a3020;
         }
 
         /* Title input */
         .title-input {
             width: 100%;
             background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--fg-subtle);
             border-radius: 12px;
-            padding: 16px 20px;
-            color: #fff;
+            padding: 14px 20px;
+            color: var(--fg);
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.05rem;
+            font-size: 1rem;
             outline: none;
             text-align: center;
             letter-spacing: 1px;
@@ -95,28 +179,28 @@
         }
 
         .title-input::placeholder {
-            color: rgba(255, 255, 255, 0.2);
+            color: var(--fg-dim);
         }
 
         .title-input:focus {
-            border-color: rgba(255, 255, 255, 0.35);
+            border-color: var(--ring-stroke);
         }
 
         /* Tier label */
         .tier-label {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.25);
+            font-size: 0.75rem;
+            color: var(--fg-dim);
             letter-spacing: 3px;
             text-transform: uppercase;
             transition: color 0.4s;
         }
 
-        /* Timer circle container */
+        /* Timer circle */
         .timer-container {
             position: relative;
-            width: 320px;
-            height: 320px;
+            width: 300px;
+            height: 300px;
         }
 
         .timer-svg {
@@ -127,131 +211,126 @@
 
         .ring-bg {
             fill: none;
-            stroke: rgba(255, 255, 255, 0.06);
-            stroke-width: 4;
+            stroke: var(--ring-bg);
+            stroke-width: 3.5;
         }
 
         .ring-progress {
             fill: none;
-            stroke: #fff;
-            stroke-width: 4;
+            stroke: var(--ring-stroke);
+            stroke-width: 3.5;
             stroke-linecap: round;
             transition: stroke-dashoffset 0.3s linear;
         }
 
-        /* Tick marks */
         .tick {
-            stroke: rgba(255, 255, 255, 0.1);
+            stroke: var(--tick-color);
             stroke-width: 1;
         }
 
         .tick-major {
-            stroke: rgba(255, 255, 255, 0.25);
+            stroke: var(--tick-major);
             stroke-width: 1.5;
         }
 
-        /* Center overlay */
+        /* Elapsed time inside circle */
         .center {
             position: absolute;
             inset: 0;
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .elapsed {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.6rem;
+            font-weight: 300;
+            letter-spacing: 3px;
+            color: var(--fg);
+        }
+
+        /* Buttons — BELOW the circle */
+        .controls {
+            display: flex;
             align-items: center;
             justify-content: center;
             gap: 16px;
+            min-height: 56px;
         }
 
-        /* Elapsed time */
-        .elapsed {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 2.4rem;
-            font-weight: 300;
-            letter-spacing: 2px;
-            color: #fff;
-        }
-
-        /* Start button (single circle) */
-        .btn-start {
-            width: 72px;
-            height: 72px;
+        .btn-ctrl {
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--fg-subtle);
             background: transparent;
-            color: rgba(255, 255, 255, 0.7);
+            color: var(--fg-dim);
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.8rem;
-            letter-spacing: 2px;
+            font-size: 0.7rem;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
             cursor: pointer;
             transition: all 0.3s;
-        }
-
-        .btn-start:hover {
-            border-color: rgba(255, 255, 255, 0.5);
-            color: #fff;
-        }
-
-        /* Split button container (pause + stop) */
-        .btn-split {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            display: none;
-            /* shown when running */
-        }
-
-        .btn-half {
-            position: absolute;
-            width: 80px;
-            height: 80px;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            transition: all 0.25s;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* Left semicircle (pause/resume) */
-        .btn-pause {
-            clip-path: inset(0 50% 0 0);
-            border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+        .btn-ctrl:hover {
+            border-color: var(--fg);
+            color: var(--fg);
         }
 
-        .btn-pause:hover {
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        /* Right semicircle (stop) */
-        .btn-stop {
-            clip-path: inset(0 0 0 50%);
-            border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .btn-stop:hover {
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .btn-half svg {
-            width: 18px;
-            height: 18px;
-            stroke: rgba(255, 255, 255, 0.7);
+        .btn-ctrl svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
             fill: none;
             stroke-width: 2;
             stroke-linecap: round;
             stroke-linejoin: round;
         }
 
-        /* Pause icon offset left, stop icon offset right */
-        .btn-pause svg {
-            transform: translateX(-8px);
+        .btn-start-wide {
+            width: auto;
+            padding: 0 28px;
+            border-radius: 28px;
+            font-size: 0.8rem;
+            letter-spacing: 3px;
         }
 
-        .btn-stop svg {
-            transform: translateX(8px);
+        .btn-stop {
+            border-color: rgba(220, 80, 80, 0.3);
+            color: rgba(220, 80, 80, 0.6);
+        }
+
+        .btn-stop:hover {
+            border-color: rgba(220, 80, 80, 0.7);
+            color: rgba(220, 80, 80, 1);
+        }
+
+        /* Download button */
+        .btn-download {
+            margin-top: 4px;
+            font-size: 0.7rem;
+            color: var(--fg-dim);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: transparent;
+            border: 1px solid var(--fg-faint);
+            border-radius: 8px;
+            padding: 8px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Space Grotesk', sans-serif;
+            display: none;
+            /* shown after stop */
+        }
+
+        .btn-download:hover {
+            border-color: var(--fg-subtle);
+            color: var(--fg);
         }
 
         /* Calendar badge */
@@ -260,7 +339,7 @@
             bottom: 24px;
             right: 24px;
             font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.2);
+            color: var(--fg-dim);
             letter-spacing: 2px;
             text-transform: uppercase;
             display: flex;
@@ -288,19 +367,19 @@
             }
         }
 
-        /* Toast notification */
+        /* Toast */
         .toast {
             position: fixed;
             bottom: 60px;
             left: 50%;
             transform: translateX(-50%) translateY(20px);
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: var(--fg-faint);
+            border: 1px solid var(--fg-subtle);
             backdrop-filter: blur(12px);
             padding: 12px 24px;
             border-radius: 10px;
             font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.7);
+            color: var(--fg-dim);
             letter-spacing: 1px;
             opacity: 0;
             transition: all 0.4s;
@@ -317,12 +396,12 @@
         @keyframes fadeUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(16px)
             }
 
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0)
             }
         }
 
@@ -335,117 +414,136 @@
         }
 
         .page>*:nth-child(2) {
-            animation-delay: 0.08s;
+            animation-delay: 0.06s;
         }
 
         .page>*:nth-child(3) {
-            animation-delay: 0.15s;
+            animation-delay: 0.12s;
         }
 
         .page>*:nth-child(4) {
-            animation-delay: 0.22s;
+            animation-delay: 0.18s;
+        }
+
+        .page>*:nth-child(5) {
+            animation-delay: 0.24s;
+        }
+
+        .page>*:nth-child(6) {
+            animation-delay: 0.30s;
         }
 
         @media (max-width:480px) {
             .timer-container {
-                width: 260px;
-                height: 260px;
+                width: 250px;
+                height: 250px;
             }
 
             .elapsed {
-                font-size: 1.8rem;
+                font-size: 2rem;
             }
         }
     </style>
 </head>
 
-<body>
+<body data-theme="dark">
     <div class="page">
-        <a href="/" class="back">← Back</a>
+        <div class="top-bar">
+            <a href="/" class="back">← Back</a>
+            <div class="theme-switcher">
+                <div class="theme-dot active" data-t="dark" onclick="setTheme('dark')" title="Dark"></div>
+                <div class="theme-dot" data-t="warm" onclick="setTheme('warm')" title="Warm"></div>
+                <div class="theme-dot" data-t="cool" onclick="setTheme('cool')" title="Cool"></div>
+                <div class="theme-dot" data-t="green" onclick="setTheme('green')" title="Green"></div>
+            </div>
+        </div>
 
         <input type="text" class="title-input" id="timerTitle" placeholder="Session title…" maxlength="100">
 
-        <div class="tier-label" id="tierLabel">0 — 60 min</div>
+        <div class="tier-label" id="tierLabel">0 — 60 sec</div>
 
         <div class="timer-container" id="timerContainer">
-            <svg class="timer-svg" id="timerSvg" viewBox="0 0 320 320"></svg>
+            <svg class="timer-svg" id="timerSvg" viewBox="0 0 300 300"></svg>
             <div class="center">
                 <div class="elapsed" id="elapsed">00:00:00</div>
-
-                <!-- Start button -->
-                <button class="btn-start" id="btnStart" onclick="startTimer()">Start</button>
-
-                <!-- Split button (pause / stop) -->
-                <div class="btn-split" id="btnSplit">
-                    <button class="btn-half btn-pause" id="btnPause" onclick="togglePause()" title="Pause">
-                        <svg viewBox="0 0 24 24" id="pauseIcon">
-                            <line x1="8" y1="5" x2="8" y2="19" />
-                            <line x1="16" y1="5" x2="16" y2="19" />
-                        </svg>
-                    </button>
-                    <button class="btn-half btn-stop" onclick="stopTimer()" title="Stop">
-                        <svg viewBox="0 0 24 24">
-                            <rect x="6" y="6" width="12" height="12" rx="1" />
-                        </svg>
-                    </button>
-                </div>
             </div>
         </div>
+
+        <!-- Controls BELOW the circle -->
+        <div class="controls" id="controls">
+            <button class="btn-ctrl btn-start-wide" id="btnStart" onclick="startTimer()">Start</button>
+        </div>
+
+        <button class="btn-download" id="btnDownload" onclick="downloadICS()">↓ Download .ics</button>
     </div>
 
-    <!-- Calendar badge -->
     {% if calendar_enabled and calendar_connected %}
     <div class="cal-badge">
-        <div class="cal-dot"></div>
-        Calendar sync on
+        <div class="cal-dot"></div>Calendar sync on
     </div>
     {% endif %}
 
     <div class="toast" id="toast"></div>
 
     <script>
+        // ─── Theme ─────────────────────────────────
+        function setTheme(t) {
+            document.body.setAttribute('data-theme', t === 'dark' ? 'dark' : t);
+            document.querySelectorAll('.theme-dot').forEach(d => d.classList.toggle('active', d.dataset.t === t));
+            localStorage.setItem('timerTheme', t);
+        }
+        (function () {
+            const saved = localStorage.getItem('timerTheme');
+            if (saved) setTheme(saved);
+        })();
+
         // ─── Tier Config ───────────────────────────
         const TIERS = [
-            { label: '0 — 60 min', maxSeconds: 60 * 60 },       // 60 min
-            { label: '0 — 4 hours', maxSeconds: 4 * 60 * 60 },   //  4 h
-            { label: '0 — 8 hours', maxSeconds: 8 * 60 * 60 },   //  8 h
+            { label: '0 — 60 sec', maxSeconds: 60 },            // 1 min
+            { label: '0 — 60 min', maxSeconds: 60 * 60 },       // 1 hour
+            { label: '0 — 4 hours', maxSeconds: 4 * 60 * 60 },   // 4 h
+            { label: '0 — 8 hours', maxSeconds: 8 * 60 * 60 },   // 8 h
             { label: '0 — 12 hours', maxSeconds: 12 * 60 * 60 },  // 12 h
         ];
 
         // ─── State ─────────────────────────────────
         let running = false;
         let paused = false;
-        let startTime = null;   // Date
-        let elapsed = 0;      // seconds accumulated before last pause
+        let startTime = null;
+        let elapsed = 0;
         let rafId = null;
         let currentTier = 0;
+        let lastSessionStart = null;
+        let lastSessionEnd = null;
+        let lastSessionTitle = '';
+        let lastSessionSeconds = 0;
         const calendarEnabled = {{ 'true' if (calendar_enabled and calendar_connected) else 'false' }};
 
-        // ─── DOM refs ──────────────────────────────
+        // ─── DOM ───────────────────────────────────
         const svgEl = document.getElementById('timerSvg');
         const elapsedEl = document.getElementById('elapsed');
         const tierLabelEl = document.getElementById('tierLabel');
-        const btnStart = document.getElementById('btnStart');
-        const btnSplit = document.getElementById('btnSplit');
-        const btnPause = document.getElementById('btnPause');
-        const pauseIcon = document.getElementById('pauseIcon');
+        const controlsEl = document.getElementById('controls');
+        const downloadBtn = document.getElementById('btnDownload');
 
         // ─── Ring geometry ─────────────────────────
-        const CX = 160, CY = 160, R = 145;
+        const CX = 150, CY = 150, R = 135;
         const CIRCUMFERENCE = 2 * Math.PI * R;
 
         function buildSvg() {
             const tier = TIERS[currentTier];
             let html = '';
 
-            // Background ring
+            // background ring
             html += `<circle class="ring-bg" cx="${CX}" cy="${CY}" r="${R}"/>`;
 
             // Tick marks
             const totalSec = tier.maxSeconds;
             let tickInterval, majorEvery;
-            if (totalSec <= 3600) {                  // 60 min
-                tickInterval = 60; majorEvery = 5;   // every minute, major every 5
+            if (totalSec <= 60) {                    // 60 sec
+                tickInterval = 1; majorEvery = 5;    // every second, major every 5
+            } else if (totalSec <= 3600) {           // 60 min
+                tickInterval = 60; majorEvery = 5;   // every min, major every 5
             } else if (totalSec <= 14400) {          // 4 h
                 tickInterval = 300; majorEvery = 4;  // every 5 min, major every 20 min
             } else if (totalSec <= 28800) {          // 8 h
@@ -467,7 +565,7 @@
                 html += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="${isMajor ? 'tick-major' : 'tick'}"/>`;
             }
 
-            // Progress ring
+            // progress ring
             html += `<circle class="ring-progress" id="ringProgress" cx="${CX}" cy="${CY}" r="${R}"
                     stroke-dasharray="${CIRCUMFERENCE}" stroke-dashoffset="${CIRCUMFERENCE}"/>`;
 
@@ -476,6 +574,27 @@
 
         buildSvg();
 
+        // ─── Render controls ───────────────────────
+        function renderStartBtn() {
+            controlsEl.innerHTML = `<button class="btn-ctrl btn-start-wide" onclick="startTimer()">Start</button>`;
+        }
+
+        function renderRunningBtns() {
+            controlsEl.innerHTML = `
+            <button class="btn-ctrl" id="btnPause" onclick="togglePause()" title="Pause">
+                <svg viewBox="0 0 24 24" id="pauseIcon">
+                    <line x1="8" y1="5" x2="8" y2="19"/>
+                    <line x1="16" y1="5" x2="16" y2="19"/>
+                </svg>
+            </button>
+            <button class="btn-ctrl btn-stop" onclick="stopTimer()" title="Stop">
+                <svg viewBox="0 0 24 24">
+                    <rect x="6" y="6" width="12" height="12" rx="1"/>
+                </svg>
+            </button>
+        `;
+        }
+
         // ─── Timer logic ───────────────────────────
         function startTimer() {
             running = true;
@@ -483,25 +602,21 @@
             elapsed = 0;
             currentTier = 0;
             startTime = new Date();
+            lastSessionStart = new Date();
+            downloadBtn.style.display = 'none';
             buildSvg();
             tierLabelEl.textContent = TIERS[0].label;
-
-            btnStart.style.display = 'none';
-            btnSplit.style.display = 'block';
-
-            updatePauseIcon();
+            renderRunningBtns();
             tick();
         }
 
         function togglePause() {
             if (!running) return;
             if (paused) {
-                // resume
                 paused = false;
                 startTime = new Date();
                 tick();
             } else {
-                // pause
                 paused = true;
                 elapsed += (Date.now() - startTime.getTime()) / 1000;
                 cancelAnimationFrame(rafId);
@@ -510,12 +625,12 @@
         }
 
         function updatePauseIcon() {
+            const icon = document.getElementById('pauseIcon');
+            if (!icon) return;
             if (paused) {
-                // show play icon
-                pauseIcon.innerHTML = '<polygon points="7,5 19,12 7,19"/>';
+                icon.innerHTML = '<polygon points="7,5 19,12 7,19"/>';
             } else {
-                // show pause icon
-                pauseIcon.innerHTML = '<line x1="8" y1="5" x2="8" y2="19"/><line x1="16" y1="5" x2="16" y2="19"/>';
+                icon.innerHTML = '<line x1="8" y1="5" x2="8" y2="19"/><line x1="16" y1="5" x2="16" y2="19"/>';
             }
         }
 
@@ -526,16 +641,21 @@
             cancelAnimationFrame(rafId);
 
             const totalElapsed = elapsed + (Date.now() - startTime.getTime()) / 1000;
+            lastSessionEnd = new Date();
+            lastSessionTitle = document.getElementById('timerTitle').value.trim() || 'Timer Session';
+            lastSessionSeconds = totalElapsed;
 
-            btnSplit.style.display = 'none';
-            btnStart.style.display = 'block';
+            renderStartBtn();
+
+            // Show download button
+            downloadBtn.style.display = 'block';
 
             // Log to calendar
             if (calendarEnabled && totalElapsed > 1) {
                 logToCalendar(totalElapsed);
             }
 
-            // Reset
+            // Reset visuals
             elapsed = 0;
             currentTier = 0;
             buildSvg();
@@ -549,29 +669,28 @@
             const totalSeconds = elapsed + (now - startTime.getTime()) / 1000;
 
             // Check tier upgrade
-            let newTier = currentTier;
+            let newTier = 0;
             for (let i = TIERS.length - 1; i >= 0; i--) {
-                if (totalSeconds < TIERS[i].maxSeconds) {
+                if (totalSeconds >= TIERS[i].maxSeconds && i < TIERS.length - 1) {
+                    newTier = i + 1;
+                    break;
+                } else if (totalSeconds < TIERS[i].maxSeconds) {
                     newTier = i;
                 }
             }
-            // Only upgrade, never downgrade
             if (newTier > currentTier) {
                 currentTier = newTier;
                 buildSvg();
                 tierLabelEl.textContent = TIERS[currentTier].label;
             }
 
-            // Update ring
             const tier = TIERS[currentTier];
             const fraction = Math.min(totalSeconds / tier.maxSeconds, 1);
             const offset = CIRCUMFERENCE * (1 - fraction);
             const ring = document.getElementById('ringProgress');
             if (ring) ring.setAttribute('stroke-dashoffset', offset);
 
-            // Update clock
             elapsedEl.textContent = formatTime(totalSeconds);
-
             rafId = requestAnimationFrame(tick);
         }
 
@@ -583,10 +702,10 @@
         }
         function pad(n) { return String(n).padStart(2, '0'); }
 
-        // ─── Calendar integration ──────────────────
+        // ─── Calendar logging ──────────────────────
         async function logToCalendar(totalSeconds) {
-            const title = document.getElementById('timerTitle').value.trim() || 'Timer Session';
-            const endTime = new Date();
+            const title = lastSessionTitle;
+            const endTime = lastSessionEnd;
             const sTime = new Date(endTime.getTime() - totalSeconds * 1000);
 
             try {
@@ -606,6 +725,53 @@
             }
         }
 
+        // ─── Download .ics ─────────────────────────
+        function downloadICS() {
+            if (!lastSessionStart || !lastSessionEnd) return;
+
+            const dtFmt = d => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+            const dur = formatDuration(lastSessionSeconds);
+
+            const ics = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//OutOfTime//Timer//EN',
+                'CALSCALE:GREGORIAN',
+                'METHOD:PUBLISH',
+                'BEGIN:VEVENT',
+                `DTSTART:${dtFmt(lastSessionStart)}`,
+                `DTEND:${dtFmt(lastSessionEnd)}`,
+                `SUMMARY:${lastSessionTitle}`,
+                `DESCRIPTION:Timer session via OutOfTime\\nDuration: ${dur}`,
+                `UID:${crypto.randomUUID()}@outoftime`,
+                `DTSTAMP:${dtFmt(new Date())}`,
+                'STATUS:CONFIRMED',
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ].join('\r\n');
+
+            const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${lastSessionTitle.replace(/[^a-zA-Z0-9]/g, '_')}.ics`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('Downloaded .ics file');
+        }
+
+        function formatDuration(sec) {
+            const h = Math.floor(sec / 3600);
+            const m = Math.floor((sec % 3600) / 60);
+            const s = Math.floor(sec % 60);
+            if (h > 0) return `${h}h ${m}m ${s}s`;
+            if (m > 0) return `${m}m ${s}s`;
+            return `${s}s`;
+        }
+
+        // ─── Toast ─────────────────────────────────
         function showToast(msg) {
             const t = document.getElementById('toast');
             t.textContent = msg;
