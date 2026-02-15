@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
+    <title>Timer — OutOfTime</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* grain */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* grid lines */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .page {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 36px;
+            padding: 24px;
+            width: 100%;
+            max-width: 540px;
+        }
+
+        /* Back link */
+        .back {
+            align-self: flex-start;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.3);
+            text-decoration: none;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: color .3s;
+        }
+
+        .back:hover {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Title input */
+        .title-input {
+            width: 100%;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px 20px;
+            color: #fff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.05rem;
+            outline: none;
+            text-align: center;
+            letter-spacing: 1px;
+            transition: border-color 0.3s;
+        }
+
+        .title-input::placeholder {
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .title-input:focus {
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+
+        /* Tier label */
+        .tier-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            transition: color 0.4s;
+        }
+
+        /* Timer circle container */
+        .timer-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
+        }
+
+        .timer-svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .ring-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.06);
+            stroke-width: 4;
+        }
+
+        .ring-progress {
+            fill: none;
+            stroke: #fff;
+            stroke-width: 4;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.3s linear;
+        }
+
+        /* Tick marks */
+        .tick {
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-width: 1;
+        }
+
+        .tick-major {
+            stroke: rgba(255, 255, 255, 0.25);
+            stroke-width: 1.5;
+        }
+
+        /* Center overlay */
+        .center {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        /* Elapsed time */
+        .elapsed {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.4rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: #fff;
+        }
+
+        /* Start button (single circle) */
+        .btn-start {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-start:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+            color: #fff;
+        }
+
+        /* Split button container (pause + stop) */
+        .btn-split {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            display: none;
+            /* shown when running */
+        }
+
+        .btn-half {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Left semicircle (pause/resume) */
+        .btn-pause {
+            clip-path: inset(0 50% 0 0);
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-pause:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Right semicircle (stop) */
+        .btn-stop {
+            clip-path: inset(0 0 0 50%);
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-stop:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .btn-half svg {
+            width: 18px;
+            height: 18px;
+            stroke: rgba(255, 255, 255, 0.7);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Pause icon offset left, stop icon offset right */
+        .btn-pause svg {
+            transform: translateX(-8px);
+        }
+
+        .btn-stop svg {
+            transform: translateX(8px);
+        }
+
+        /* Calendar badge */
+        .cal-badge {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.2);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cal-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #4CAF50;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .4
+            }
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 1px;
+            opacity: 0;
+            transition: all 0.4s;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Entry animation */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page>* {
+            animation: fadeUp 0.5s ease both;
+        }
+
+        .page>*:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .page>*:nth-child(2) {
+            animation-delay: 0.08s;
+        }
+
+        .page>*:nth-child(3) {
+            animation-delay: 0.15s;
+        }
+
+        .page>*:nth-child(4) {
+            animation-delay: 0.22s;
+        }
+
+        @media (max-width:480px) {
+            .timer-container {
+                width: 260px;
+                height: 260px;
+            }
+
+            .elapsed {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <a href="/" class="back">← Back</a>
+
+        <input type="text" class="title-input" id="timerTitle" placeholder="Session title…" maxlength="100">
+
+        <div class="tier-label" id="tierLabel">0 — 60 min</div>
+
+        <div class="timer-container" id="timerContainer">
+            <svg class="timer-svg" id="timerSvg" viewBox="0 0 320 320"></svg>
+            <div class="center">
+                <div class="elapsed" id="elapsed">00:00:00</div>
+
+                <!-- Start button -->
+                <button class="btn-start" id="btnStart" onclick="startTimer()">Start</button>
+
+                <!-- Split button (pause / stop) -->
+                <div class="btn-split" id="btnSplit">
+                    <button class="btn-half btn-pause" id="btnPause" onclick="togglePause()" title="Pause">
+                        <svg viewBox="0 0 24 24" id="pauseIcon">
+                            <line x1="8" y1="5" x2="8" y2="19" />
+                            <line x1="16" y1="5" x2="16" y2="19" />
+                        </svg>
+                    </button>
+                    <button class="btn-half btn-stop" onclick="stopTimer()" title="Stop">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="6" y="6" width="12" height="12" rx="1" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calendar badge -->
+    {% if calendar_enabled and calendar_connected %}
+    <div class="cal-badge">
+        <div class="cal-dot"></div>
+        Calendar sync on
+    </div>
+    {% endif %}
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ─── Tier Config ───────────────────────────
+        const TIERS = [
+            { label: '0 — 60 min', maxSeconds: 60 * 60 },       // 60 min
+            { label: '0 — 4 hours', maxSeconds: 4 * 60 * 60 },   //  4 h
+            { label: '0 — 8 hours', maxSeconds: 8 * 60 * 60 },   //  8 h
+            { label: '0 — 12 hours', maxSeconds: 12 * 60 * 60 },  // 12 h
+        ];
+
+        // ─── State ─────────────────────────────────
+        let running = false;
+        let paused = false;
+        let startTime = null;   // Date
+        let elapsed = 0;      // seconds accumulated before last pause
+        let rafId = null;
+        let currentTier = 0;
+        const calendarEnabled = {{ 'true' if (calendar_enabled and calendar_connected) else 'false' }};
+
+        // ─── DOM refs ──────────────────────────────
+        const svgEl = document.getElementById('timerSvg');
+        const elapsedEl = document.getElementById('elapsed');
+        const tierLabelEl = document.getElementById('tierLabel');
+        const btnStart = document.getElementById('btnStart');
+        const btnSplit = document.getElementById('btnSplit');
+        const btnPause = document.getElementById('btnPause');
+        const pauseIcon = document.getElementById('pauseIcon');
+
+        // ─── Ring geometry ─────────────────────────
+        const CX = 160, CY = 160, R = 145;
+        const CIRCUMFERENCE = 2 * Math.PI * R;
+
+        function buildSvg() {
+            const tier = TIERS[currentTier];
+            let html = '';
+
+            // Background ring
+            html += `<circle class="ring-bg" cx="${CX}" cy="${CY}" r="${R}"/>`;
+
+            // Tick marks
+            const totalSec = tier.maxSeconds;
+            let tickInterval, majorEvery;
+            if (totalSec <= 3600) {                  // 60 min
+                tickInterval = 60; majorEvery = 5;   // every minute, major every 5
+            } else if (totalSec <= 14400) {          // 4 h
+                tickInterval = 300; majorEvery = 4;  // every 5 min, major every 20 min
+            } else if (totalSec <= 28800) {          // 8 h
+                tickInterval = 600; majorEvery = 3;  // every 10 min, major every 30 min
+            } else {                                 // 12 h
+                tickInterval = 900; majorEvery = 4;  // every 15 min, major every hour
+            }
+
+            const numTicks = Math.floor(totalSec / tickInterval);
+            for (let i = 0; i < numTicks; i++) {
+                const angle = (i / numTicks) * 360 - 90;
+                const rad = angle * Math.PI / 180;
+                const isMajor = (i % majorEvery === 0);
+                const innerR = isMajor ? R - 12 : R - 7;
+                const x1 = CX + innerR * Math.cos(rad);
+                const y1 = CY + innerR * Math.sin(rad);
+                const x2 = CX + R * Math.cos(rad);
+                const y2 = CY + R * Math.sin(rad);
+                html += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="${isMajor ? 'tick-major' : 'tick'}"/>`;
+            }
+
+            // Progress ring
+            html += `<circle class="ring-progress" id="ringProgress" cx="${CX}" cy="${CY}" r="${R}"
+                    stroke-dasharray="${CIRCUMFERENCE}" stroke-dashoffset="${CIRCUMFERENCE}"/>`;
+
+            svgEl.innerHTML = html;
+        }
+
+        buildSvg();
+
+        // ─── Timer logic ───────────────────────────
+        function startTimer() {
+            running = true;
+            paused = false;
+            elapsed = 0;
+            currentTier = 0;
+            startTime = new Date();
+            buildSvg();
+            tierLabelEl.textContent = TIERS[0].label;
+
+            btnStart.style.display = 'none';
+            btnSplit.style.display = 'block';
+
+            updatePauseIcon();
+            tick();
+        }
+
+        function togglePause() {
+            if (!running) return;
+            if (paused) {
+                // resume
+                paused = false;
+                startTime = new Date();
+                tick();
+            } else {
+                // pause
+                paused = true;
+                elapsed += (Date.now() - startTime.getTime()) / 1000;
+                cancelAnimationFrame(rafId);
+            }
+            updatePauseIcon();
+        }
+
+        function updatePauseIcon() {
+            if (paused) {
+                // show play icon
+                pauseIcon.innerHTML = '<polygon points="7,5 19,12 7,19"/>';
+            } else {
+                // show pause icon
+                pauseIcon.innerHTML = '<line x1="8" y1="5" x2="8" y2="19"/><line x1="16" y1="5" x2="16" y2="19"/>';
+            }
+        }
+
+        function stopTimer() {
+            if (!running) return;
+            running = false;
+            paused = false;
+            cancelAnimationFrame(rafId);
+
+            const totalElapsed = elapsed + (Date.now() - startTime.getTime()) / 1000;
+
+            btnSplit.style.display = 'none';
+            btnStart.style.display = 'block';
+
+            // Log to calendar
+            if (calendarEnabled && totalElapsed > 1) {
+                logToCalendar(totalElapsed);
+            }
+
+            // Reset
+            elapsed = 0;
+            currentTier = 0;
+            buildSvg();
+            elapsedEl.textContent = '00:00:00';
+            tierLabelEl.textContent = TIERS[0].label;
+        }
+
+        function tick() {
+            if (!running || paused) return;
+            const now = Date.now();
+            const totalSeconds = elapsed + (now - startTime.getTime()) / 1000;
+
+            // Check tier upgrade
+            let newTier = currentTier;
+            for (let i = TIERS.length - 1; i >= 0; i--) {
+                if (totalSeconds < TIERS[i].maxSeconds) {
+                    newTier = i;
+                }
+            }
+            // Only upgrade, never downgrade
+            if (newTier > currentTier) {
+                currentTier = newTier;
+                buildSvg();
+                tierLabelEl.textContent = TIERS[currentTier].label;
+            }
+
+            // Update ring
+            const tier = TIERS[currentTier];
+            const fraction = Math.min(totalSeconds / tier.maxSeconds, 1);
+            const offset = CIRCUMFERENCE * (1 - fraction);
+            const ring = document.getElementById('ringProgress');
+            if (ring) ring.setAttribute('stroke-dashoffset', offset);
+
+            // Update clock
+            elapsedEl.textContent = formatTime(totalSeconds);
+
+            rafId = requestAnimationFrame(tick);
+        }
+
+        function formatTime(sec) {
+            const h = Math.floor(sec / 3600);
+            const m = Math.floor((sec % 3600) / 60);
+            const s = Math.floor(sec % 60);
+            return `${pad(h)}:${pad(m)}:${pad(s)}`;
+        }
+        function pad(n) { return String(n).padStart(2, '0'); }
+
+        // ─── Calendar integration ──────────────────
+        async function logToCalendar(totalSeconds) {
+            const title = document.getElementById('timerTitle').value.trim() || 'Timer Session';
+            const endTime = new Date();
+            const sTime = new Date(endTime.getTime() - totalSeconds * 1000);
+
+            try {
+                const res = await fetch('/timer/log', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: title,
+                        start_time: sTime.toISOString(),
+                        end_time: endTime.toISOString()
+                    })
+                });
+                const data = await res.json();
+                showToast(data.success ? 'Logged to Calendar ✓' : 'Calendar log failed');
+            } catch (e) {
+                showToast('Calendar log failed');
+            }
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2500);
+        }
+
+        // ─── Keyboard shortcuts ────────────────────
+        document.addEventListener('keydown', e => {
+            if (document.activeElement.tagName === 'INPUT') return;
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (!running) startTimer();
+                else togglePause();
+            }
+            if (e.code === 'Escape' && running) stopTimer();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,11 +1,12 @@
 from fastapi import FastAPI, Request, Form, HTTPException, Cookie
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 import uuid
+import json
 
 # Import calendar integration
 from calendar_integration import calendar_integration
@@ -147,9 +148,15 @@ def get_user_theme(request: Request) -> str:
     return theme if theme in THEMES else "blue_gradient"
 
 @app.get("/", response_class=HTMLResponse)
+async def landing_page(request: Request):
+    """Landing page — choose between Tasks and Timer"""
+    return templates.TemplateResponse("landing.html", {"request": request})
+
+
+@app.get("/tasks", response_class=HTMLResponse)
 async def read_todos(request: Request):
     """
-    Main page endpoint - displays all todos in hierarchical order with theme support
+    Tasks page - displays all todos in hierarchical order with theme support
     """
     hierarchical_todos = get_hierarchical_todos()
     
@@ -163,6 +170,49 @@ async def read_todos(request: Request):
             "calendar_connected": calendar_integration.is_configured()
         }
     )
+
+
+@app.get("/timer", response_class=HTMLResponse)
+async def timer_page(request: Request):
+    """Timer page — circular dynamic stopwatch"""
+    return templates.TemplateResponse(
+        "timer.html",
+        {
+            "request": request,
+            "calendar_enabled": user_settings.get("calendar_enabled", False),
+            "calendar_connected": calendar_integration.is_configured()
+        }
+    )
+
+
+@app.post("/timer/log")
+async def log_timer(request: Request):
+    """Log a completed timer session to Google Calendar"""
+    try:
+        body = await request.json()
+        title = body.get("title", "Timer Session")
+        start_iso = body.get("start_time")
+        end_iso = body.get("end_time")
+
+        if not start_iso or not end_iso:
+            return JSONResponse({"success": False, "error": "Missing times"}, status_code=400)
+
+        start_dt = datetime.fromisoformat(start_iso.replace("Z", "+00:00"))
+        end_dt = datetime.fromisoformat(end_iso.replace("Z", "+00:00"))
+
+        if not user_settings.get("calendar_enabled") or not calendar_integration.is_configured():
+            return JSONResponse({"success": False, "error": "Calendar not enabled"})
+
+        duration = end_dt - start_dt
+        ok = calendar_integration.create_calendar_event(
+            todo_title=title,
+            start_time=start_dt,
+            end_time=end_dt,
+            description=f"Timer session via OutOfTime\nDuration: {calendar_integration._format_duration(duration)}"
+        )
+        return JSONResponse({"success": ok})
+    except Exception as e:
+        return JSONResponse({"success": False, "error": str(e)}, status_code=500)
 
 @app.post("/set-theme/{theme_name}")
 async def set_theme(theme_name: str):
