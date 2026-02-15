@@ -68,15 +68,11 @@
             background: var(--bg);
             color: var(--fg);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
             position: relative;
             overflow-x: hidden;
         }
 
-        /* Subtle grid */
+        /* grid bg */
         body::after {
             content: '';
             position: fixed;
@@ -96,9 +92,10 @@
             flex-direction: column;
             align-items: center;
             gap: 28px;
-            padding: 24px;
+            padding: 24px 24px 80px;
             width: 100%;
-            max-width: 540px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         /* Top bar */
@@ -122,7 +119,12 @@
             color: var(--fg);
         }
 
-        /* Theme switcher */
+        .top-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
         .theme-switcher {
             display: flex;
             gap: 6px;
@@ -134,7 +136,7 @@
             border-radius: 50%;
             border: 1.5px solid var(--fg-subtle);
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all .3s;
         }
 
         .theme-dot:hover {
@@ -162,20 +164,72 @@
             background: #1a3020;
         }
 
+        /* Timers grid */
+        .timers-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            justify-items: center;
+        }
+
+        /* Single timer card */
+        .timer-card {
+            width: 100%;
+            max-width: 360px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            padding: 24px 16px;
+            border: 1px solid var(--fg-faint);
+            border-radius: 16px;
+            background: var(--fg-faint);
+            position: relative;
+            transition: border-color 0.3s;
+        }
+
+        .timer-card.running {
+            border-color: var(--ring-stroke);
+        }
+
+        .timer-card .remove-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--fg-dim);
+            font-size: 1.1rem;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all .2s;
+        }
+
+        .timer-card .remove-btn:hover {
+            color: rgba(220, 80, 80, 0.8);
+            background: rgba(220, 80, 80, 0.1);
+        }
+
         /* Title input */
         .title-input {
             width: 100%;
             background: transparent;
             border: 1px solid var(--fg-subtle);
-            border-radius: 12px;
-            padding: 14px 20px;
+            border-radius: 10px;
+            padding: 10px 14px;
             color: var(--fg);
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 1rem;
+            font-size: 0.9rem;
             outline: none;
             text-align: center;
             letter-spacing: 1px;
-            transition: border-color 0.3s;
+            transition: border-color .3s;
         }
 
         .title-input::placeholder {
@@ -189,18 +243,17 @@
         /* Tier label */
         .tier-label {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             color: var(--fg-dim);
             letter-spacing: 3px;
             text-transform: uppercase;
-            transition: color 0.4s;
         }
 
         /* Timer circle */
         .timer-container {
             position: relative;
-            width: 300px;
-            height: 300px;
+            width: 220px;
+            height: 220px;
         }
 
         .timer-svg {
@@ -212,28 +265,27 @@
         .ring-bg {
             fill: none;
             stroke: var(--ring-bg);
-            stroke-width: 3.5;
+            stroke-width: 3;
         }
 
         .ring-progress {
             fill: none;
             stroke: var(--ring-stroke);
-            stroke-width: 3.5;
+            stroke-width: 3;
             stroke-linecap: round;
-            transition: stroke-dashoffset 0.3s linear;
+            transition: stroke-dashoffset .3s linear;
         }
 
         .tick {
             stroke: var(--tick-color);
-            stroke-width: 1;
+            stroke-width: 0.8;
         }
 
         .tick-major {
             stroke: var(--tick-major);
-            stroke-width: 1.5;
+            stroke-width: 1.2;
         }
 
-        /* Elapsed time inside circle */
         .center {
             position: absolute;
             inset: 0;
@@ -244,37 +296,37 @@
 
         .elapsed {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 2.6rem;
+            font-size: 1.8rem;
             font-weight: 300;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             color: var(--fg);
         }
 
-        /* Buttons — BELOW the circle */
+        /* Controls below circle */
         .controls {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 16px;
-            min-height: 56px;
+            gap: 12px;
+            min-height: 44px;
         }
 
         .btn-ctrl {
-            width: 56px;
-            height: 56px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             border: 1px solid var(--fg-subtle);
             background: transparent;
             color: var(--fg-dim);
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.7rem;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all .3s;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.65rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
         }
 
         .btn-ctrl:hover {
@@ -283,8 +335,8 @@
         }
 
         .btn-ctrl svg {
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
             stroke: currentColor;
             fill: none;
             stroke-width: 2;
@@ -294,10 +346,10 @@
 
         .btn-start-wide {
             width: auto;
-            padding: 0 28px;
-            border-radius: 28px;
-            font-size: 0.8rem;
-            letter-spacing: 3px;
+            padding: 0 22px;
+            border-radius: 22px;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
         }
 
         .btn-stop {
@@ -310,46 +362,95 @@
             color: rgba(220, 80, 80, 1);
         }
 
-        /* Download button */
-        .btn-download {
-            margin-top: 4px;
+        /* Add timer button */
+        .add-timer-btn {
+            width: 100%;
+            max-width: 360px;
+            padding: 16px;
+            border: 1px dashed var(--fg-subtle);
+            border-radius: 16px;
+            background: transparent;
+            color: var(--fg-dim);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all .3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .add-timer-btn:hover {
+            border-color: var(--fg-subtle);
+            color: var(--fg);
+            background: var(--fg-faint);
+        }
+
+        /* Bottom bar */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 5;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            padding: 16px 24px;
+            background: linear-gradient(transparent, var(--bg) 40%);
+        }
+
+        .bar-btn {
             font-size: 0.7rem;
             color: var(--fg-dim);
             letter-spacing: 2px;
             text-transform: uppercase;
-            background: transparent;
-            border: 1px solid var(--fg-faint);
+            background: var(--fg-faint);
+            border: 1px solid var(--fg-subtle);
             border-radius: 8px;
-            padding: 8px 20px;
+            padding: 10px 20px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all .3s;
             font-family: 'Space Grotesk', sans-serif;
-            display: none;
-            /* shown after stop */
         }
 
-        .btn-download:hover {
+        .bar-btn:hover {
             border-color: var(--fg-subtle);
             color: var(--fg);
+        }
+
+        .bar-btn .badge {
+            display: inline-block;
+            background: var(--ring-stroke);
+            color: var(--bg);
+            font-size: 0.6rem;
+            padding: 1px 6px;
+            border-radius: 8px;
+            margin-left: 6px;
+            font-weight: 600;
         }
 
         /* Calendar badge */
         .cal-badge {
             position: fixed;
-            bottom: 24px;
+            bottom: 60px;
             right: 24px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--fg-dim);
             letter-spacing: 2px;
             text-transform: uppercase;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            z-index: 6;
         }
 
         .cal-dot {
-            width: 6px;
-            height: 6px;
+            width: 5px;
+            height: 5px;
             border-radius: 50%;
             background: #4CAF50;
             animation: pulse 2s infinite;
@@ -370,19 +471,19 @@
         /* Toast */
         .toast {
             position: fixed;
-            bottom: 60px;
+            bottom: 70px;
             left: 50%;
             transform: translateX(-50%) translateY(20px);
             background: var(--fg-faint);
             border: 1px solid var(--fg-subtle);
             backdrop-filter: blur(12px);
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-size: 0.8rem;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.75rem;
             color: var(--fg-dim);
             letter-spacing: 1px;
             opacity: 0;
-            transition: all 0.4s;
+            transition: all .4s;
             pointer-events: none;
             z-index: 10;
         }
@@ -392,7 +493,7 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        /* Entry animation */
+        /* Entry */
         @keyframes fadeUp {
             from {
                 opacity: 0;
@@ -406,7 +507,7 @@
         }
 
         .page>* {
-            animation: fadeUp 0.5s ease both;
+            animation: fadeUp .5s ease both;
         }
 
         .page>*:nth-child(1) {
@@ -414,33 +515,21 @@
         }
 
         .page>*:nth-child(2) {
-            animation-delay: 0.06s;
-        }
-
-        .page>*:nth-child(3) {
-            animation-delay: 0.12s;
-        }
-
-        .page>*:nth-child(4) {
-            animation-delay: 0.18s;
-        }
-
-        .page>*:nth-child(5) {
-            animation-delay: 0.24s;
-        }
-
-        .page>*:nth-child(6) {
-            animation-delay: 0.30s;
+            animation-delay: .08s;
         }
 
         @media (max-width:480px) {
             .timer-container {
-                width: 250px;
-                height: 250px;
+                width: 180px;
+                height: 180px;
             }
 
             .elapsed {
-                font-size: 2rem;
+                font-size: 1.4rem;
+            }
+
+            .timers-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -450,31 +539,17 @@
     <div class="page">
         <div class="top-bar">
             <a href="/" class="back">← Back</a>
-            <div class="theme-switcher">
-                <div class="theme-dot active" data-t="dark" onclick="setTheme('dark')" title="Dark"></div>
-                <div class="theme-dot" data-t="warm" onclick="setTheme('warm')" title="Warm"></div>
-                <div class="theme-dot" data-t="cool" onclick="setTheme('cool')" title="Cool"></div>
-                <div class="theme-dot" data-t="green" onclick="setTheme('green')" title="Green"></div>
+            <div class="top-actions">
+                <div class="theme-switcher">
+                    <div class="theme-dot active" data-t="dark" onclick="setTheme('dark')" title="Dark"></div>
+                    <div class="theme-dot" data-t="warm" onclick="setTheme('warm')" title="Warm"></div>
+                    <div class="theme-dot" data-t="cool" onclick="setTheme('cool')" title="Cool"></div>
+                    <div class="theme-dot" data-t="green" onclick="setTheme('green')" title="Green"></div>
+                </div>
             </div>
         </div>
 
-        <input type="text" class="title-input" id="timerTitle" placeholder="Session title…" maxlength="100">
-
-        <div class="tier-label" id="tierLabel">0 — 60 sec</div>
-
-        <div class="timer-container" id="timerContainer">
-            <svg class="timer-svg" id="timerSvg" viewBox="0 0 300 300"></svg>
-            <div class="center">
-                <div class="elapsed" id="elapsed">00:00:00</div>
-            </div>
-        </div>
-
-        <!-- Controls BELOW the circle -->
-        <div class="controls" id="controls">
-            <button class="btn-ctrl btn-start-wide" id="btnStart" onclick="startTimer()">Start</button>
-        </div>
-
-        <button class="btn-download" id="btnDownload" onclick="downloadICS()">↓ Download .ics</button>
+        <div class="timers-grid" id="timersGrid"></div>
     </div>
 
     {% if calendar_enabled and calendar_connected %}
@@ -483,81 +558,82 @@
     </div>
     {% endif %}
 
+    <!-- Bottom bar -->
+    <div class="bottom-bar">
+        <button class="bar-btn" onclick="addTimer()">+ Add Timer</button>
+        <button class="bar-btn" id="btnDownload" onclick="downloadAllICS()">
+            ↓ Download .ics <span class="badge" id="sessionCount">0</span>
+        </button>
+        <button class="bar-btn" onclick="clearSessions()">Clear Sessions</button>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <script>
         // ─── Theme ─────────────────────────────────
         function setTheme(t) {
-            document.body.setAttribute('data-theme', t === 'dark' ? 'dark' : t);
+            document.body.setAttribute('data-theme', t);
             document.querySelectorAll('.theme-dot').forEach(d => d.classList.toggle('active', d.dataset.t === t));
             localStorage.setItem('timerTheme', t);
         }
-        (function () {
-            const saved = localStorage.getItem('timerTheme');
-            if (saved) setTheme(saved);
-        })();
+        (function () { const s = localStorage.getItem('timerTheme'); if (s) setTheme(s); })();
 
         // ─── Tier Config ───────────────────────────
         const TIERS = [
-            { label: '0 — 60 sec', maxSeconds: 60 },            // 1 min
-            { label: '0 — 60 min', maxSeconds: 60 * 60 },       // 1 hour
-            { label: '0 — 4 hours', maxSeconds: 4 * 60 * 60 },   // 4 h
-            { label: '0 — 8 hours', maxSeconds: 8 * 60 * 60 },   // 8 h
-            { label: '0 — 12 hours', maxSeconds: 12 * 60 * 60 },  // 12 h
+            { label: '0 — 60 sec', maxSeconds: 60 },
+            { label: '0 — 60 min', maxSeconds: 3600 },
+            { label: '0 — 4 hours', maxSeconds: 14400 },
+            { label: '0 — 8 hours', maxSeconds: 28800 },
+            { label: '0 — 12 hours', maxSeconds: 43200 },
         ];
 
-        // ─── State ─────────────────────────────────
-        let running = false;
-        let paused = false;
-        let startTime = null;
-        let elapsed = 0;
-        let rafId = null;
-        let currentTier = 0;
-        let lastSessionStart = null;
-        let lastSessionEnd = null;
-        let lastSessionTitle = '';
-        let lastSessionSeconds = 0;
         const calendarEnabled = {{ 'true' if (calendar_enabled and calendar_connected) else 'false' }};
 
-        // ─── DOM ───────────────────────────────────
-        const svgEl = document.getElementById('timerSvg');
-        const elapsedEl = document.getElementById('elapsed');
-        const tierLabelEl = document.getElementById('tierLabel');
-        const controlsEl = document.getElementById('controls');
-        const downloadBtn = document.getElementById('btnDownload');
+        // ─── Sessions store ────────────────────────
+        let sessions = JSON.parse(localStorage.getItem('timerSessions') || '[]');
+        updateSessionBadge();
 
-        // ─── Ring geometry ─────────────────────────
-        const CX = 150, CY = 150, R = 135;
-        const CIRCUMFERENCE = 2 * Math.PI * R;
+        // ─── Timer instances ───────────────────────
+        let nextId = 1;
+        const timers = {};  // id -> timer state
 
-        function buildSvg() {
-            const tier = TIERS[currentTier];
-            let html = '';
+        // SVG geometry
+        const CX = 110, CY = 110, R = 100;
+        const CIRC = 2 * Math.PI * R;
 
-            // background ring
-            html += `<circle class="ring-bg" cx="${CX}" cy="${CY}" r="${R}"/>`;
+        function createTimerState(id) {
+            return {
+                id,
+                running: false,
+                paused: false,
+                startTime: null,
+                elapsed: 0,
+                rafId: null,
+                currentTier: 0,
+                sessionStart: null,
+            };
+        }
 
-            // Tick marks
+        function buildSvg(id) {
+            const t = timers[id];
+            const tier = TIERS[t.currentTier];
+            const svg = document.getElementById(`svg-${id}`);
+            let html = `<circle class="ring-bg" cx="${CX}" cy="${CY}" r="${R}"/>`;
+
             const totalSec = tier.maxSeconds;
             let tickInterval, majorEvery;
-            if (totalSec <= 60) {                    // 60 sec
-                tickInterval = 1; majorEvery = 5;    // every second, major every 5
-            } else if (totalSec <= 3600) {           // 60 min
-                tickInterval = 60; majorEvery = 5;   // every min, major every 5
-            } else if (totalSec <= 14400) {          // 4 h
-                tickInterval = 300; majorEvery = 4;  // every 5 min, major every 20 min
-            } else if (totalSec <= 28800) {          // 8 h
-                tickInterval = 600; majorEvery = 3;  // every 10 min, major every 30 min
-            } else {                                 // 12 h
-                tickInterval = 900; majorEvery = 4;  // every 15 min, major every hour
-            }
+            if (totalSec <= 60) { tickInterval = 1; majorEvery = 5; }
+            else if (totalSec <= 3600) { tickInterval = 60; majorEvery = 5; }
+            else if (totalSec <= 14400) { tickInterval = 300; majorEvery = 4; }
+            else if (totalSec <= 28800) { tickInterval = 600; majorEvery = 3; }
+            else { tickInterval = 900; majorEvery = 4; }
 
             const numTicks = Math.floor(totalSec / tickInterval);
             for (let i = 0; i < numTicks; i++) {
                 const angle = (i / numTicks) * 360 - 90;
                 const rad = angle * Math.PI / 180;
                 const isMajor = (i % majorEvery === 0);
-                const innerR = isMajor ? R - 12 : R - 7;
+                const innerR = isMajor ? R - 10 : R - 6;
                 const x1 = CX + innerR * Math.cos(rad);
                 const y1 = CY + innerR * Math.sin(rad);
                 const x2 = CX + R * Math.cos(rad);
@@ -565,172 +641,210 @@
                 html += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="${isMajor ? 'tick-major' : 'tick'}"/>`;
             }
 
-            // progress ring
-            html += `<circle class="ring-progress" id="ringProgress" cx="${CX}" cy="${CY}" r="${R}"
-                    stroke-dasharray="${CIRCUMFERENCE}" stroke-dashoffset="${CIRCUMFERENCE}"/>`;
-
-            svgEl.innerHTML = html;
+            html += `<circle class="ring-progress" id="ring-${id}" cx="${CX}" cy="${CY}" r="${R}"
+                    stroke-dasharray="${CIRC}" stroke-dashoffset="${CIRC}"/>`;
+            svg.innerHTML = html;
         }
 
-        buildSvg();
+        // ─── Render a timer card ───────────────────
+        function addTimer() {
+            const id = nextId++;
+            timers[id] = createTimerState(id);
+            const grid = document.getElementById('timersGrid');
 
-        // ─── Render controls ───────────────────────
-        function renderStartBtn() {
-            controlsEl.innerHTML = `<button class="btn-ctrl btn-start-wide" onclick="startTimer()">Start</button>`;
+            const card = document.createElement('div');
+            card.className = 'timer-card';
+            card.id = `card-${id}`;
+            card.innerHTML = `
+            <button class="remove-btn" onclick="removeTimer(${id})" title="Remove">✕</button>
+            <input type="text" class="title-input" id="title-${id}" placeholder="Session title…" maxlength="100">
+            <div class="tier-label" id="tier-${id}">${TIERS[0].label}</div>
+            <div class="timer-container">
+                <svg class="timer-svg" id="svg-${id}" viewBox="0 0 220 220"></svg>
+                <div class="center">
+                    <div class="elapsed" id="elapsed-${id}">00:00:00</div>
+                </div>
+            </div>
+            <div class="controls" id="ctrls-${id}">
+                <button class="btn-ctrl btn-start-wide" onclick="startT(${id})">Start</button>
+            </div>
+        `;
+            grid.appendChild(card);
+            buildSvg(id);
         }
 
-        function renderRunningBtns() {
-            controlsEl.innerHTML = `
-            <button class="btn-ctrl" id="btnPause" onclick="togglePause()" title="Pause">
-                <svg viewBox="0 0 24 24" id="pauseIcon">
-                    <line x1="8" y1="5" x2="8" y2="19"/>
-                    <line x1="16" y1="5" x2="16" y2="19"/>
+        function removeTimer(id) {
+            const t = timers[id];
+            if (t && t.running) stopT(id);
+            const card = document.getElementById(`card-${id}`);
+            if (card) card.remove();
+            delete timers[id];
+        }
+
+        // ─── Timer controls ────────────────────────
+        function startT(id) {
+            const t = timers[id];
+            t.running = true; t.paused = false; t.elapsed = 0;
+            t.currentTier = 0; t.startTime = new Date(); t.sessionStart = new Date();
+            buildSvg(id);
+            document.getElementById(`tier-${id}`).textContent = TIERS[0].label;
+            document.getElementById(`card-${id}`).classList.add('running');
+            renderRunning(id);
+            tickT(id);
+        }
+
+        function pauseT(id) {
+            const t = timers[id];
+            if (!t.running) return;
+            if (t.paused) {
+                t.paused = false; t.startTime = new Date(); tickT(id);
+            } else {
+                t.paused = true;
+                t.elapsed += (Date.now() - t.startTime.getTime()) / 1000;
+                cancelAnimationFrame(t.rafId);
+            }
+            updatePauseIcon(id);
+        }
+
+        function stopT(id) {
+            const t = timers[id];
+            if (!t.running) return;
+            t.running = false; t.paused = false;
+            cancelAnimationFrame(t.rafId);
+
+            const totalSec = t.elapsed + (Date.now() - t.startTime.getTime()) / 1000;
+            const endTime = new Date();
+            const title = document.getElementById(`title-${id}`).value.trim() || 'Timer Session';
+
+            // Save session
+            sessions.push({
+                title,
+                start: t.sessionStart.toISOString(),
+                end: endTime.toISOString(),
+                seconds: totalSec,
+            });
+            localStorage.setItem('timerSessions', JSON.stringify(sessions));
+            updateSessionBadge();
+
+            // Calendar log
+            if (calendarEnabled && totalSec > 1) {
+                logToCalendar(title, t.sessionStart, endTime, totalSec);
+            }
+
+            // Reset UI
+            document.getElementById(`card-${id}`).classList.remove('running');
+            t.elapsed = 0; t.currentTier = 0;
+            buildSvg(id);
+            document.getElementById(`elapsed-${id}`).textContent = '00:00:00';
+            document.getElementById(`tier-${id}`).textContent = TIERS[0].label;
+            renderStart(id);
+
+            showToast(`Session "${title}" saved (${formatDur(totalSec)})`);
+        }
+
+        function renderStart(id) {
+            document.getElementById(`ctrls-${id}`).innerHTML =
+                `<button class="btn-ctrl btn-start-wide" onclick="startT(${id})">Start</button>`;
+        }
+
+        function renderRunning(id) {
+            document.getElementById(`ctrls-${id}`).innerHTML = `
+            <button class="btn-ctrl" id="pauseBtn-${id}" onclick="pauseT(${id})" title="Pause">
+                <svg viewBox="0 0 24 24" id="pauseIcon-${id}">
+                    <line x1="8" y1="5" x2="8" y2="19"/><line x1="16" y1="5" x2="16" y2="19"/>
                 </svg>
             </button>
-            <button class="btn-ctrl btn-stop" onclick="stopTimer()" title="Stop">
-                <svg viewBox="0 0 24 24">
-                    <rect x="6" y="6" width="12" height="12" rx="1"/>
-                </svg>
+            <button class="btn-ctrl btn-stop" onclick="stopT(${id})" title="Stop">
+                <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
             </button>
         `;
         }
 
-        // ─── Timer logic ───────────────────────────
-        function startTimer() {
-            running = true;
-            paused = false;
-            elapsed = 0;
-            currentTier = 0;
-            startTime = new Date();
-            lastSessionStart = new Date();
-            downloadBtn.style.display = 'none';
-            buildSvg();
-            tierLabelEl.textContent = TIERS[0].label;
-            renderRunningBtns();
-            tick();
-        }
-
-        function togglePause() {
-            if (!running) return;
-            if (paused) {
-                paused = false;
-                startTime = new Date();
-                tick();
-            } else {
-                paused = true;
-                elapsed += (Date.now() - startTime.getTime()) / 1000;
-                cancelAnimationFrame(rafId);
-            }
-            updatePauseIcon();
-        }
-
-        function updatePauseIcon() {
-            const icon = document.getElementById('pauseIcon');
+        function updatePauseIcon(id) {
+            const icon = document.getElementById(`pauseIcon-${id}`);
             if (!icon) return;
-            if (paused) {
-                icon.innerHTML = '<polygon points="7,5 19,12 7,19"/>';
-            } else {
-                icon.innerHTML = '<line x1="8" y1="5" x2="8" y2="19"/><line x1="16" y1="5" x2="16" y2="19"/>';
-            }
+            const t = timers[id];
+            icon.innerHTML = t.paused
+                ? '<polygon points="7,5 19,12 7,19"/>'
+                : '<line x1="8" y1="5" x2="8" y2="19"/><line x1="16" y1="5" x2="16" y2="19"/>';
         }
 
-        function stopTimer() {
-            if (!running) return;
-            running = false;
-            paused = false;
-            cancelAnimationFrame(rafId);
+        function tickT(id) {
+            const t = timers[id];
+            if (!t.running || t.paused) return;
+            const totalSec = t.elapsed + (Date.now() - t.startTime.getTime()) / 1000;
 
-            const totalElapsed = elapsed + (Date.now() - startTime.getTime()) / 1000;
-            lastSessionEnd = new Date();
-            lastSessionTitle = document.getElementById('timerTitle').value.trim() || 'Timer Session';
-            lastSessionSeconds = totalElapsed;
-
-            renderStartBtn();
-
-            // Show download button
-            downloadBtn.style.display = 'block';
-
-            // Log to calendar
-            if (calendarEnabled && totalElapsed > 1) {
-                logToCalendar(totalElapsed);
-            }
-
-            // Reset visuals
-            elapsed = 0;
-            currentTier = 0;
-            buildSvg();
-            elapsedEl.textContent = '00:00:00';
-            tierLabelEl.textContent = TIERS[0].label;
-        }
-
-        function tick() {
-            if (!running || paused) return;
-            const now = Date.now();
-            const totalSeconds = elapsed + (now - startTime.getTime()) / 1000;
-
-            // Check tier upgrade
+            // tier upgrade
             let newTier = 0;
             for (let i = TIERS.length - 1; i >= 0; i--) {
-                if (totalSeconds >= TIERS[i].maxSeconds && i < TIERS.length - 1) {
-                    newTier = i + 1;
-                    break;
-                } else if (totalSeconds < TIERS[i].maxSeconds) {
-                    newTier = i;
-                }
+                if (totalSec >= TIERS[i].maxSeconds && i < TIERS.length - 1) { newTier = i + 1; break; }
+                else if (totalSec < TIERS[i].maxSeconds) { newTier = i; }
             }
-            if (newTier > currentTier) {
-                currentTier = newTier;
-                buildSvg();
-                tierLabelEl.textContent = TIERS[currentTier].label;
+            if (newTier > t.currentTier) {
+                t.currentTier = newTier;
+                buildSvg(id);
+                document.getElementById(`tier-${id}`).textContent = TIERS[t.currentTier].label;
             }
 
-            const tier = TIERS[currentTier];
-            const fraction = Math.min(totalSeconds / tier.maxSeconds, 1);
-            const offset = CIRCUMFERENCE * (1 - fraction);
-            const ring = document.getElementById('ringProgress');
+            const tier = TIERS[t.currentTier];
+            const fraction = Math.min(totalSec / tier.maxSeconds, 1);
+            const offset = CIRC * (1 - fraction);
+            const ring = document.getElementById(`ring-${id}`);
             if (ring) ring.setAttribute('stroke-dashoffset', offset);
 
-            elapsedEl.textContent = formatTime(totalSeconds);
-            rafId = requestAnimationFrame(tick);
+            document.getElementById(`elapsed-${id}`).textContent = formatTime(totalSec);
+            t.rafId = requestAnimationFrame(() => tickT(id));
         }
 
-        function formatTime(sec) {
-            const h = Math.floor(sec / 3600);
-            const m = Math.floor((sec % 3600) / 60);
-            const s = Math.floor(sec % 60);
-            return `${pad(h)}:${pad(m)}:${pad(s)}`;
+        // ─── Helpers ───────────────────────────────
+        function formatTime(s) {
+            return `${pad(Math.floor(s / 3600))}:${pad(Math.floor((s % 3600) / 60))}:${pad(Math.floor(s % 60))}`;
         }
         function pad(n) { return String(n).padStart(2, '0'); }
-
-        // ─── Calendar logging ──────────────────────
-        async function logToCalendar(totalSeconds) {
-            const title = lastSessionTitle;
-            const endTime = lastSessionEnd;
-            const sTime = new Date(endTime.getTime() - totalSeconds * 1000);
-
-            try {
-                const res = await fetch('/timer/log', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        title: title,
-                        start_time: sTime.toISOString(),
-                        end_time: endTime.toISOString()
-                    })
-                });
-                const data = await res.json();
-                showToast(data.success ? 'Logged to Calendar ✓' : 'Calendar log failed');
-            } catch (e) {
-                showToast('Calendar log failed');
-            }
+        function formatDur(s) {
+            const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = Math.floor(s % 60);
+            if (h > 0) return `${h}h ${m}m ${sec}s`;
+            if (m > 0) return `${m}m ${sec}s`;
+            return `${sec}s`;
         }
 
-        // ─── Download .ics ─────────────────────────
-        function downloadICS() {
-            if (!lastSessionStart || !lastSessionEnd) return;
+        function updateSessionBadge() {
+            document.getElementById('sessionCount').textContent = sessions.length;
+        }
 
-            const dtFmt = d => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-            const dur = formatDuration(lastSessionSeconds);
+        // ─── Calendar ──────────────────────────────
+        async function logToCalendar(title, startDt, endDt, totalSec) {
+            try {
+                const res = await fetch('/timer/log', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, start_time: startDt.toISOString(), end_time: endDt.toISOString() })
+                });
+                const data = await res.json();
+                if (data.success) showToast('Logged to Calendar ✓');
+            } catch (e) { /* silent */ }
+        }
+
+        // ─── Download ALL sessions as single .ics ──
+        function downloadAllICS() {
+            if (sessions.length === 0) { showToast('No sessions to download'); return; }
+
+            const dtFmt = d => new Date(d).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+            let events = '';
+
+            sessions.forEach(s => {
+                events += [
+                    'BEGIN:VEVENT',
+                    `DTSTART:${dtFmt(s.start)}`,
+                    `DTEND:${dtFmt(s.end)}`,
+                    `SUMMARY:${s.title}`,
+                    `DESCRIPTION:Timer session via OutOfTime\\nDuration: ${formatDur(s.seconds)}`,
+                    `UID:${crypto.randomUUID()}@outoftime`,
+                    `DTSTAMP:${dtFmt(new Date().toISOString())}`,
+                    'STATUS:CONFIRMED',
+                    'END:VEVENT',
+                    ''
+                ].join('\r\n');
+            });
 
             const ics = [
                 'BEGIN:VCALENDAR',
@@ -738,15 +852,7 @@
                 'PRODID:-//OutOfTime//Timer//EN',
                 'CALSCALE:GREGORIAN',
                 'METHOD:PUBLISH',
-                'BEGIN:VEVENT',
-                `DTSTART:${dtFmt(lastSessionStart)}`,
-                `DTEND:${dtFmt(lastSessionEnd)}`,
-                `SUMMARY:${lastSessionTitle}`,
-                `DESCRIPTION:Timer session via OutOfTime\\nDuration: ${dur}`,
-                `UID:${crypto.randomUUID()}@outoftime`,
-                `DTSTAMP:${dtFmt(new Date())}`,
-                'STATUS:CONFIRMED',
-                'END:VEVENT',
+                events.trimEnd(),
                 'END:VCALENDAR'
             ].join('\r\n');
 
@@ -754,41 +860,32 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${lastSessionTitle.replace(/[^a-zA-Z0-9]/g, '_')}.ics`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            const dateStr = new Date().toISOString().slice(0, 10);
+            a.download = `OutOfTime_Sessions_${dateStr}.ics`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            showToast('Downloaded .ics file');
+
+            showToast(`Downloaded ${sessions.length} session(s)`);
         }
 
-        function formatDuration(sec) {
-            const h = Math.floor(sec / 3600);
-            const m = Math.floor((sec % 3600) / 60);
-            const s = Math.floor(sec % 60);
-            if (h > 0) return `${h}h ${m}m ${s}s`;
-            if (m > 0) return `${m}m ${s}s`;
-            return `${s}s`;
+        function clearSessions() {
+            if (sessions.length === 0) return;
+            if (!confirm(`Clear ${sessions.length} stored session(s)?`)) return;
+            sessions = [];
+            localStorage.removeItem('timerSessions');
+            updateSessionBadge();
+            showToast('Sessions cleared');
         }
 
         // ─── Toast ─────────────────────────────────
         function showToast(msg) {
             const t = document.getElementById('toast');
-            t.textContent = msg;
-            t.classList.add('show');
+            t.textContent = msg; t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 2500);
         }
 
-        // ─── Keyboard shortcuts ────────────────────
-        document.addEventListener('keydown', e => {
-            if (document.activeElement.tagName === 'INPUT') return;
-            if (e.code === 'Space') {
-                e.preventDefault();
-                if (!running) startTimer();
-                else togglePause();
-            }
-            if (e.code === 'Escape' && running) stopTimer();
-        });
+        // ─── Init with one timer ───────────────────
+        addTimer();
     </script>
 </body>
 
