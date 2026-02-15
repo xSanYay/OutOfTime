@@ -1,3 +1,8 @@
+![Screenshot](Screenshot%20from%202026-02-15%2015-46-27.png)
+![Screenshot](Screenshot%20from%202026-02-15%2018-53-46.png)
+![Screenshot](Screenshot%20from%202026-02-15%2018-54-44.png)
+![Screenshot](Screenshot%20from%202026-02-15%2018-55-20.png)
+
 # Clean Todo App with Smart Sequencing & Calendar Integration
 
 Image links in this >> https://github.com/xSanYay/todo_for_you_and_me/tree/main/evolution
